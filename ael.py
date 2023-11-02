@@ -15,7 +15,6 @@ import pandas as pd
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from fractions import Fraction
-import osmnx as ox
 
 # Define the folder containing the images
 #image_folder_L = "/Users/alyafaraht/Downloads/yes/"
