@@ -16,7 +16,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from fractions import Fraction
 import requests
-from bs4 import BeautifulSoup
+import json
 
 
 
@@ -93,8 +93,11 @@ def extract_image_urls(folder_url):
 
     if response.status_code == 200:
         # Parse the HTML content to find image links
-        soup = BeautifulSoup(response.text, 'html.parser')
-        image_links = [a['href'] for a in soup.find_all('a') if a['href'].endswith(('.jpg', '.jpeg'))]
+        #soup = BeautifulSoup(response.text, 'html.parser')
+        # Parse the JSON response
+        data = json.loads(response.text)
+        image_urls = [item['path'] for item in data['payload']['tree']['items'] if item['contentType'] == 'file' and (item['path'].lower().endswith('.jpg') or item['path'].lower().endswith('.jpeg'))]
+        #image_links = [a['href'] for a in soup.find_all('a') if a['href'].endswith(('.jpg', '.jpeg'))]
 
         for image_link in image_links:
             # Create the full image URL
