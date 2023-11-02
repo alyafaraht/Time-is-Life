@@ -15,11 +15,12 @@ import pandas as pd
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from fractions import Fraction
+import requests
+from bs4 import BeautifulSoup
 
-# Define the folder containing the images
-#image_folder_L = "/Users/alyafaraht/Downloads/yes/"
 
-# Function to extract GPS data from an image
+
+# -----------------------------Extract GPS data-----------------------------
 def fraction_to_decimal(fraction):
     return float(fraction.numerator) / float(fraction.denominator)
 
@@ -55,7 +56,7 @@ def extract_gps(image_loc):
     df_gps = pd.DataFrame(data_gps)
     return df_gps
 
-# Function to extract distance data from an image
+# -----------------------------Extract distance data-----------------------------
 def extract_distance(image_loc):
     image = cv2.imread(image_loc)
     scale = 0.02  # Adjust this value according to the height of the drones
@@ -83,15 +84,38 @@ def extract_distance(image_loc):
     return df_distance
 
 
+# -----------------------------Make dataframe-----------------------------
+def extract_image_urls(folder_url):
+    # Send a GET request to the folder URL
+    response = requests.get(folder_url)
 
-def call_ael(image_folder_L):
+    image_urls = []
+
+    if response.status_code == 200:
+        # Parse the HTML content to find image links
+        soup = BeautifulSoup(response.text, 'html.parser')
+        image_links = [a['href'] for a in soup.find_all('a') if a['href'].endswith(('.jpg', '.jpeg'))]
+
+        for image_link in image_links:
+            # Create the full image URL
+            image_url = folder_url.rstrip('/') + '/' + image_link
+            image_urls.append(image_url)
+
+    return image_urls
+
+def call_ael(folder_url):
+    # Extract image URLs from the provided folder URL
+    image_urls = extract_image_urls(folder_url)
+
     # Create a list to store DataFrames for each image
     df_list = []
 
-    # Loop through the images in the folder
-    for filename in os.listdir(image_folder_L):
-        if filename.endswith((".jpg", ".jpeg")):
-            image_loc = os.path.join(image_folder_L, filename)
+    for image_url in image_urls:
+        # Download the image
+        response = requests.get(image_url)
+
+        if response.status_code == 200:
+            image_loc = response.content
             # Extract GPS coordinates
             df_gps = extract_gps(image_loc)
             # Extract distance information
