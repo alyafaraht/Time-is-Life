@@ -6,11 +6,11 @@ Created on Tue Oct 31 21:59:27 2023
 @author: alyafaraht
 """
 
-import ael as L
+import Modules.Du as D
 
-image_folder_L = "/Users/alyafaraht/Downloads/ael/assets/"
+# # Define the folder containing the database
+data_folder = r".\Modules\Assets\GPR"
 
-ael_result = L.call_ael(image_folder_L)
-ael_result
-print (ael_result) #--- just to check
-
+du_result = D.call_du(data_folder) #calling the result
+# print(du_result)  # Print to see the result
+print(du_result)
