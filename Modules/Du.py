@@ -132,5 +132,5 @@ def call_du(data_folder):
   return table_ael
 
 
-print(call_du(data_folder))
+# print(call_du(data_folder))
 
