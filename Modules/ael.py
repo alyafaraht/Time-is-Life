@@ -104,6 +104,7 @@ def call_ael(image_folder_L):
 
     # Concatenate all the DataFrames in the list
     df_all = pd.concat(df_list, ignore_index=True)
-
+    # print(df_all)
+    
     return df_all
 
